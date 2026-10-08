@@ -1,0 +1,9 @@
+*.bak
+*.swp
+*~
+.DS_Store
+# Never commit local VPN profiles or secrets.
+*.nmconnection
+*.conf
+.env
+.env.*
