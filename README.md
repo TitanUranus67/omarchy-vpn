@@ -1,8 +1,8 @@
 # Omarchy VPN
 
-A VPN toggle in Omarchy’s Wi-Fi panel, with a shield showing connection status. Remembers your last on/off choice across reboots.
+A VPN picker and toggle in Omarchy’s Wi-Fi panel. Import WireGuard configs, see connection status, and remember your on/off choice across reboots.
 
-Requires Omarchy’s Quickshell shell and an existing NetworkManager WireGuard connection.
+Requires Omarchy’s Quickshell shell, NetworkManager, `python-gobject`, `libnm`, and `zenity`.
 
 ## Install
 
@@ -10,20 +10,13 @@ Requires Omarchy’s Quickshell shell and an existing NetworkManager WireGuard c
 omarchy plugin add https://github.com/TitanUranus67/omarchy-vpn.git --enable
 ```
 
-## Configure
+## Use
 
-In `~/.config/omarchy/shell.json`, set your saved connection name in the `community.vpn` bar entry:
+- **Choose a VPN** from the picker, then toggle it on or off.
+- **Add VPN…** → choose a WireGuard `.conf` → name it → **Add**. It stays disconnected until you click **Connect**.
+- Disconnect an active VPN before connecting another. Your selection is saved automatically.
+- Press **V** to toggle. On the VPN row, use **Left/Right** to choose the switch, picker, or Add button, then **Enter**.
 
-```json
-{
-  "id": "community.vpn",
-  "vpnConnection": "vpn",
-  "vpnLabel": "VPN"
-}
-```
-
-Click the Wi-Fi icon to toggle, or press **V** with the panel open. The shield lights up when NetworkManager reports the connection active.
-
-Uses your existing VPN routing and DNS settings; does not provide a kill switch.
+The shield shows NetworkManager’s connection state. Uses your VPN’s routing and DNS settings; does not provide a kill switch.
 
 Based on [Omarchy](https://github.com/basecamp/omarchy). [MIT license](LICENSE).

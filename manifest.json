@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "community.vpn",
   "name": "Network + VPN",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "author": "Omarchy VPN contributors; Omarchy contributors",
   "description": "Omarchy Wi-Fi panel with a VPN switch and bar status indicator",
   "kinds": [

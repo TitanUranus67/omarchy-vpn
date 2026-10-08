@@ -962,7 +962,7 @@ Panel {
     bar: root.bar
     text: root.icon
     slotSize: Style.bar.iconSlot * 2
-    tooltipText: vpn.label + ": " + vpn.status
+    tooltipText: vpn.summary
     iconComponent: Component {
       Row {
         anchors.centerIn: parent
@@ -981,8 +981,8 @@ Panel {
           text: "󰒃"
           fontFamily: root.bar.fontFamily
           fontSize: Style.bar.iconFont
-          color: vpn.connected ? Color.accent : button.foreground
-          opacity: vpn.connected ? 1 : 0.3
+          color: vpn.anyConnected ? Color.accent : button.foreground
+          opacity: vpn.anyConnected ? 1 : 0.3
         }
       }
     }
@@ -1021,7 +1021,7 @@ Panel {
       anchors.fill: parent
       // Freeze the cursor model while the inline password prompt is open;
       // the TextField inside owns input until Esc/Enter/Cancel.
-      blocked: root.passwordSsid !== ""
+      blocked: root.passwordSsid !== "" || vpn.editing
 
       onMoveRequested: function(dx, dy) {
         if (!root.cursorActive) {
@@ -1086,6 +1086,7 @@ Panel {
         }
         if (dx !== 0) {
           if (root.focusSection === "header") root.selectHeaderByDelta(dx)
+          else if (root.focusSection === "vpn") vpn.moveControl(dx)
           else if (root.focusSection === "band") { if (!root.bandAutoFocused) root.selectBandByDelta(dx) }
           else if (root.focusSection === "dns") root.selectDnsByDelta(dx)
           else if (root.focusSection === "wifi") root.selectWifiActionByDelta(dx)
@@ -1094,7 +1095,7 @@ Panel {
       onActivateRequested: {
         if (root.cursorActive) {
           if (root.focusSection === "header") root.activateHeader()
-          else if (root.focusSection === "vpn") vpn.toggle()
+          else if (root.focusSection === "vpn") vpn.activateControl()
           else if (root.focusSection === "band") root.activateBand()
           else if (root.focusSection === "dns") root.activateDns()
           else root.activateSelected()
@@ -1253,10 +1254,19 @@ Panel {
       Vpn {
         id: vpn
         connectionName: String(root.setting("vpnConnection", "vpn"))
+        savedUuid: String(root.setting("vpnUuid", ""))
         label: String(root.setting("vpnLabel", "VPN"))
         width: parent.width
         bar: root.bar
         hasCursor: root.cursorActive && root.focusSection === "vpn"
+        onSelectionChanged: function(uuid) {
+          var entry = Object.assign({}, root.settings, {id: "community.vpn", vpnUuid: uuid})
+          root.settings = entry
+          if (root.bar && root.bar.shell) root.bar.shell.updateEntryInline("community.vpn", entry)
+        }
+        onFileDialogOpening: root.close()
+        onFileDialogClosed: root.open()
+        onEditorClosed: Qt.callLater(function() { if (root.opened) keyCatcher.forceActiveFocus() })
         onHovered: {
           root.cursorActive = true
           root.focusSection = "vpn"
